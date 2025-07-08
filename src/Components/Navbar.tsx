@@ -1,5 +1,6 @@
+// Components/Navbar.tsx
 import React, { useState, useEffect } from 'react';
-import logo from '../assets/ownMuse.png';
+import logo from '../assets/ownMuse.png'; 
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,25 +20,20 @@ const Navbar: React.FC = () => {
     }`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          {/* Logo - Updated with responsive sizing */}
+          {/* Logo - Fixed for mobile */}
           <a href="#" className="flex items-center">
-            <img 
-              src={logo} 
-              alt="OwnMuse Logo" 
-              className="h-20 md:h-32 lg:h-44 transition-all duration-300"
-              style={{ maxHeight: isScrolled ? '36px' : '' }}  
-            />
+            <img src={logo} alt="Music Science Group Logo" className="h-16 md:h-20" />
           </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <a href="#home" className="text-white hover:text-purple-400 transition-colors font-medium">Home</a>
-            <a href="#how-it-works" className="text-white hover:text-purple-400 transition-colors font-medium">How It Works</a>
-            <a href="#features" className="text-white hover:text-purple-400 transition-colors font-medium">Features</a>
-            <a href="#testimonials" className="text-white hover:text-purple-400 transition-colors font-medium">Testimonials</a>
-            <a href="#faq" className="text-white hover:text-purple-400 transition-colors font-medium">FAQ</a>
-            <a href="#" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors">
-              Sign Up
+            <a href="#mission" className="text-white hover:text-purple-400 transition-colors font-medium">Mission</a>
+            <a href="#programs" className="text-white hover:text-purple-400 transition-colors font-medium">Programs</a>
+            <a href="#impact" className="text-white hover:text-purple-400 transition-colors font-medium">Impact</a>
+            <a href="#about" className="text-white hover:text-purple-400 transition-colors font-medium">About</a>
+            <a href="#contact" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors">
+              Get Involved
             </a>
           </div>
 
@@ -65,18 +61,13 @@ const Navbar: React.FC = () => {
         mobileMenuOpen ? 'max-h-screen py-4 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'
       }`}>
         <div className="container mx-auto px-4 flex flex-col space-y-4">
-          <a href="#home" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
-             onClick={() => setMobileMenuOpen(false)}>Home</a>
-          <a href="#how-it-works" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
-             onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-          <a href="#features" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
-             onClick={() => setMobileMenuOpen(false)}>Features</a>
-          <a href="#testimonials" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
-             onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-          <a href="#faq" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
-             onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-          <a href="#" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors text-center">
-            Sign Up
+          <a href="#home" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Home</a>
+          <a href="#mission" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Mission</a>
+          <a href="#programs" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Programs</a>
+          <a href="#impact" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Impact</a>
+          <a href="#about" className="text-white hover:text-purple-400 transition-colors font-medium py-2">About</a>
+          <a href="#contact" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors text-center">
+            Get Involved
           </a>
         </div>
       </div>
