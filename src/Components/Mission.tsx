@@ -1,7 +1,6 @@
 // Components/Mission.tsx
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
-import mission from "../assets/mission.jpg"; 
 const Mission: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
