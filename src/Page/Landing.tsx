@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useEffect, useRef } from 'react';
 import Navbar from '../Components/Navbar';
 import Hero from '../Components/Hero';
 import HowItWorks from '../Components/HowItWorks';
@@ -8,40 +7,68 @@ import Testimonials from '../Components/Testimonials';
 import FAQ from '../Components/Faq';
 import CTASection from '../Components/Cta';
 import Footer from '../Components/Footer';
-import { useSmoothScroll } from '../Hooks/useSmoothScroll';
+import { gsap } from 'gsap';
 
 const LandingPage: React.FC = () => {
-  const { wrapperRef, contentRef, isSafari } = useSmoothScroll({
-    disableOnMobile: true,
-    disableOnSafari: true // Set to false if you want to try smooth scrolling on Safari
-  });
-  
+  const landingPageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Basic fade-in animations for sections
+      gsap.utils.toArray<HTMLElement>('.animate-section').forEach((section) => {
+        gsap.fromTo(
+          section,
+          { 
+            opacity: 0,
+            y: 50 
+          },
+          { 
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 80%',
+              end: 'bottom 20%',
+              toggleActions: 'play none none reverse'
+            }
+          }
+        );
+      });
+    }, landingPageRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div 
-      ref={wrapperRef} 
-      className="smooth-wrapper overflow-hidden"
-      style={{ 
-        position: 'relative',
-        WebkitOverflowScrolling: 'touch'
-      }}
-    >
-      <div 
-        ref={contentRef} 
-        className="smooth-content"
-        style={{
-          willChange: isSafari ? 'auto' : 'transform',
-          backfaceVisibility: 'hidden'
-        }}
-      >
-        <Navbar />
+    <div className="App bg-black text-white" ref={landingPageRef}>
+      <Navbar />
+      
+      <div id="home" className="section-spacer">
         <Hero />
-        <HowItWorks />
-        <Features />
-        <Testimonials />
-        <FAQ />
-        <CTASection />
-        <Footer />
       </div>
+      
+      <div id="how-it-works" className="animate-section">
+        <HowItWorks />
+      </div>
+      
+      <div id="features" className="animate-section">
+        <Features />
+      </div>
+      
+      <div id="testimonials" className="animate-section">
+        <Testimonials />
+      </div>
+      
+      <div id="faq" className="animate-section">
+        <FAQ />
+      </div>
+      
+      <div id="cta" className="animate-section">
+        <CTASection />
+      </div>
+      
+      <Footer />
     </div>
   );
 };

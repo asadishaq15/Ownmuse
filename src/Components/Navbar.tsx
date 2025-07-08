@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import logo from '../assets/ownMuse.png'; 
+import logo from '../assets/ownMuse.png';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,9 +19,14 @@ const Navbar: React.FC = () => {
     }`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - Updated with responsive sizing */}
           <a href="#" className="flex items-center">
-            <img src={logo} alt="OwnMuse Logo" className="h-44" />
+            <img 
+              src={logo} 
+              alt="OwnMuse Logo" 
+              className="h-20 md:h-32 lg:h-44 transition-all duration-300"
+              style={{ maxHeight: isScrolled ? '36px' : '' }}  
+            />
           </a>
 
           {/* Desktop Navigation */}
@@ -40,6 +45,7 @@ const Navbar: React.FC = () => {
           <button 
             className="md:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -59,11 +65,16 @@ const Navbar: React.FC = () => {
         mobileMenuOpen ? 'max-h-screen py-4 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'
       }`}>
         <div className="container mx-auto px-4 flex flex-col space-y-4">
-          <a href="#home" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Home</a>
-          <a href="#how-it-works" className="text-white hover:text-purple-400 transition-colors font-medium py-2">How It Works</a>
-          <a href="#features" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Features</a>
-          <a href="#testimonials" className="text-white hover:text-purple-400 transition-colors font-medium py-2">Testimonials</a>
-          <a href="#faq" className="text-white hover:text-purple-400 transition-colors font-medium py-2">FAQ</a>
+          <a href="#home" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
+             onClick={() => setMobileMenuOpen(false)}>Home</a>
+          <a href="#how-it-works" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
+             onClick={() => setMobileMenuOpen(false)}>How It Works</a>
+          <a href="#features" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
+             onClick={() => setMobileMenuOpen(false)}>Features</a>
+          <a href="#testimonials" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
+             onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
+          <a href="#faq" className="text-white hover:text-purple-400 transition-colors font-medium py-2"
+             onClick={() => setMobileMenuOpen(false)}>FAQ</a>
           <a href="#" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors text-center">
             Sign Up
           </a>

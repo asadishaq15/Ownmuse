@@ -1,47 +1,53 @@
-html {
-  scroll-behavior: smooth;
-  height: 100%;
-  --scroll-behavior: smooth;
-  scroll-behavior: var(--scroll-behavior);
+/* Basic reset */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-/* Improve Safari scrolling */
-body {
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000;
+  color: #fff;
   overscroll-behavior: none;
-  height: 100%;
 }
 
-/* Enable hardware acceleration */
-.smooth-content {
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+/* GSAP scroll setup */
+#smooth-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* Prevent horizontal scroll */
 }
 
-/* Force GPU acceleration for Safari */
-@supports (-webkit-overflow-scrolling: touch) {
-  .smooth-wrapper {
-    -webkit-overflow-scrolling: touch;
-    overflow-y: scroll;
-  }
-  
-  .smooth-content {
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
-  }
+#smooth-content {
+  will-change: transform;
 }
 
-/* Prevent page jumps when loading */
-@media (prefers-reduced-motion: no-preference) {
-  html, body {
-    scroll-padding-top: 80px; /* Adjust based on your navbar height */
+/* Section spacing to account for fixed navbar */
+.section-spacer {
+  padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+  .section-spacer {
+    padding-top: 60px;
   }
 }
 
-/* Make scrolling feel more responsive */
+/* Fixed position handling */
+nav {
+  position: fixed !important; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  will-change: transform;
+}
+
+/* Standard scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -59,4 +65,47 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(124, 58, 237, 0.6);
+}
+
+/* Animation helpers */
+.animate-section {
+  opacity: 0; /* Will be animated in by GSAP */
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .animate-section {
+    opacity: 1; /* Ensure content is visible on mobile even if animations don't run */
+  }
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-overflow-scrolling: touch) {
+  html, body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Force GPU acceleration */
+  #smooth-content {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* Reduce motion preference support */
+@media (prefers-reduced-motion: reduce) {
+  html, body {
+    scroll-behavior: auto;
+  }
+  
+  #smooth-wrapper, #smooth-content {
+    transform: none !important;
+  }
+  
+  .animate-section {
+    opacity: 1;
+    transform: none !important;
+  }
 }

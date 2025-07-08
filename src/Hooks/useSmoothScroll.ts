@@ -1,5 +1,4 @@
 // hooks/useSmoothScroll.ts
-
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -16,8 +15,8 @@ interface SmoothScrollOptions {
 export const useSmoothScroll = (options: SmoothScrollOptions = {}) => {
   const { 
     force = false,
-    disableOnMobile = true, 
-    disableOnSafari = true 
+    disableOnMobile = false, // Changed to false to enable on mobile
+    disableOnSafari = false  // Changed to false to enable on Safari
   } = options;
   
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -30,69 +29,77 @@ export const useSmoothScroll = (options: SmoothScrollOptions = {}) => {
   useEffect(() => {
     // Detect browser and device
     const ua = navigator.userAgent.toLowerCase();
-    setIsSafari(/safari/.test(ua) && !/chrome/.test(ua));
+    const isSafariDetected = /safari/.test(ua) && !/chrome/.test(ua);
+    setIsSafari(isSafariDetected);
     
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768 || 
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+      const isMobileDetected = window.innerWidth <= 768 || 
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobile(isMobileDetected);
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
-    // Determine if smooth scrolling should be enabled
-    const shouldEnableSmooth = force || 
-      !(disableOnMobile && isMobile) || 
-      !(disableOnSafari && isSafari);
+    // Cleanup existing ScrollTrigger instances to prevent duplicates
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     
-    // Apply different scroll settings based on environment
-    if (shouldEnableSmooth) {
-      // Create appropriate scroll settings
-      const scrollSettings = {
-        wrapper: wrapperRef.current,
-        content: contentRef.current,
-        smooth: isMobile ? 0.5 : (isSafari ? 0.6 : 0.8),
-        effects: !isMobile,
-        smoothTouch: false,
-        normalizeScroll: false,
-        ignoreMobileResize: true,
-        ease: "power1.out",
-        lazyRender: true,
-      };
+    // Short delay to ensure DOM is ready
+    const initTimeout = setTimeout(() => {
+      if (!wrapperRef.current || !contentRef.current) return;
       
-      // Initialize smoother with appropriate settings
-      smootherRef.current = ScrollSmoother.create(scrollSettings);
+      // Determine if smooth scrolling should be enabled
+      const shouldEnableSmooth = force || 
+        !(disableOnMobile && isMobile) || 
+        !(disableOnSafari && isSafari);
       
-      // Apply some browser-specific optimizations
-      if (isSafari) {
-        gsap.ticker.lagSmoothing(0, 16); // Different lag handling for Safari
-        document.body.style.overscrollBehavior = 'none';
-      } else {
-        gsap.ticker.lagSmoothing(1000, 16);
+      if (shouldEnableSmooth) {
+        // Configure ScrollTrigger for better performance
+        ScrollTrigger.config({ 
+          limitCallbacks: true,
+          ignoreMobileResize: false, // Changed to false to handle mobile orientation changes
+          autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+        });
+        
+        // Different scroll settings based on environment
+        const scrollSettings = {
+          wrapper: wrapperRef.current,
+          content: contentRef.current,
+          smooth: isMobileDetected ? 0.5 : (isSafariDetected ? 0.5 : 0.8), // Reduced for Safari
+          effects: true, // Enable effects on all devices
+          smoothTouch: 0.1, // Very light smoothing for touch devices
+          normalizeScroll: !isMobileDetected && !isSafariDetected, // Only use for desktop Chrome
+          ignoreMobileResize: false,
+          ease: "power2.out",
+          preventDefault: false, // Don't prevent default scroll behavior
+        };
+        
+        // Initialize smoother with appropriate settings
+        smootherRef.current = ScrollSmoother.create(scrollSettings);
+        
+        // Apply some browser-specific optimizations
+        if (isSafariDetected) {
+          gsap.ticker.lagSmoothing(0); // Disable lag smoothing for Safari
+        } else {
+          gsap.ticker.lagSmoothing(1000, 16);
+        }
+        
+        // Force refresh ScrollTrigger after initialization
+        ScrollTrigger.refresh(true);
       }
-      
-      // Performance optimizations
-      ScrollTrigger.config({ 
-        limitCallbacks: true,
-        ignoreMobileResize: true,
-        autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
-      });
-    }
-    
-    // Enable native-like scrolling for touch devices
-    if (isMobile || isSafari) {
-      document.documentElement.style.setProperty('--scroll-behavior', 'auto');
-    }
+    }, 200);
     
     return () => {
       window.removeEventListener('resize', checkMobile);
+      clearTimeout(initTimeout);
+      
       if (smootherRef.current) {
         smootherRef.current.kill();
       }
+      
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      document.documentElement.style.removeProperty('--scroll-behavior');
     };
-  }, [force, disableOnMobile, disableOnSafari, isMobile, isSafari]);
+  }, [force, disableOnMobile, disableOnSafari]);
   
   // Pause/resume controls for the smooth scroller
   const pauseScroll = () => {
@@ -113,6 +120,7 @@ export const useSmoothScroll = (options: SmoothScrollOptions = {}) => {
     pauseScroll, 
     resumeScroll, 
     isSafari, 
-    isMobile 
+    isMobile,
+    smoother: smootherRef.current
   };
 };
